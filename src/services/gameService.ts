@@ -1,6 +1,6 @@
 import { INITIAL_COLOURS, WELCOME_MESSAGE } from "../constants";
 import { COLOUR, Game, GAMESTATE, Hits } from "../types";
-import { arrayEquals, shuffleArray } from "../utils";
+import { arrayEquals, shuffleArray, isGame } from "../utils";
 import { v4 as uuidv4 } from "uuid";
 import { createOrUpdateGame, getGame } from "../database";
 
@@ -9,7 +9,7 @@ export class GameService {
     return WELCOME_MESSAGE;
   }
 
-  public createNewGame(maxAttempts: number): Game {
+  public async createNewGame(maxAttempts: number): Promise<Game> {
     const newGame: Game = {
       gameId: uuidv4(),
       combination: shuffleArray(INITIAL_COLOURS),
@@ -17,42 +17,49 @@ export class GameService {
       guesses: 0,
       gameState: GAMESTATE.IN_PROGRESS
     };
-    createOrUpdateGame(newGame);
+    await createOrUpdateGame(newGame);
     return newGame;
   }
 
-  private getGame(gameId: string): Game {
-    return getGame(gameId) || null as any;
+  private async getGame(gameId: string): Promise<Game | null> {
+    return await getGame(gameId);
   }
 
-  public guessCombination(gameId: string, colourGuess: COLOUR[]): GAMESTATE | Hits {
-    const currentGame = this.getGame(gameId);
-    let newGame: Game;
-    let result: GAMESTATE | Hits;
-    if (arrayEquals(currentGame.combination, colourGuess)) {
-      result = GAMESTATE.WON;
-      newGame = {
-        ...currentGame,
-        guesses: currentGame.guesses + 1,
-        gameState: result
-      };
-    } else {
-      if (currentGame.guesses < currentGame.maxAttempts - 1) {
-        result = { hits: currentGame.guesses + 1 };
-        newGame = {
-          ...currentGame,
-          guesses: result.hits
-        };
-      } else {
-        result = GAMESTATE.LOST;
+  public async guessCombination(
+    gameId: string,
+    colourGuess: COLOUR[]
+  ): Promise<GAMESTATE | Hits | null> {
+    const currentGame = await this.getGame(gameId);
+    if (isGame(currentGame)) {
+      let newGame: Game;
+      let result: GAMESTATE | Hits;
+      if (arrayEquals(currentGame.combination, colourGuess)) {
+        result = GAMESTATE.WON;
         newGame = {
           ...currentGame,
           guesses: currentGame.guesses + 1,
           gameState: result
         };
+      } else {
+        if (currentGame.guesses < currentGame.maxAttempts - 1) {
+          result = { hits: currentGame.guesses + 1 };
+          newGame = {
+            ...currentGame,
+            guesses: result.hits
+          };
+        } else {
+          result = GAMESTATE.LOST;
+          newGame = {
+            ...currentGame,
+            guesses: currentGame.guesses + 1,
+            gameState: result
+          };
+        }
       }
+      await createOrUpdateGame(newGame);
+      return result;
+    } else {
+      return null;
     }
-    createOrUpdateGame(newGame);
-    return result;
   }
 }

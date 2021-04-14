@@ -1,4 +1,4 @@
-import { COLOUR } from "../types";
+import { COLOUR, Game } from "../types";
 
 export const shuffleArray = (array: COLOUR[]): COLOUR[] => {
   const newArray = array.slice(0);
@@ -10,12 +10,11 @@ export const shuffleArray = (array: COLOUR[]): COLOUR[] => {
 };
 
 export const isProduction = (): boolean => {
-  return process.env.APP_MESSAGE === "production";
+  return process.env.NODE_ENV === "production";
 };
 
 export const arrayEquals = (a: any[], b: any[]): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i]);
 
-  function isArray(arr: any): arr is Array<any> {
-    return !!arr.length
-  }
+  export const isGame = (game: Game | null): game is Game => 
+  (game as Game).gameId !== undefined;

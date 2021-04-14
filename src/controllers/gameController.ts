@@ -15,9 +15,9 @@ export class GameController {
     res.send(welcomeMessage);
   };
 
-  private newGame = (req: Request, res: Response) => {
+  private newGame = async (req: Request, res: Response) => {
     try {
-      const newGame = this.gameService.createNewGame(parseInt(req.body.maxAttempts));
+      const newGame = await this.gameService.createNewGame(parseInt(req.body.maxAttempts));
       res.send(newGame.gameId);
     } catch (e) {
       res.status(500).send(e.message);
@@ -26,7 +26,7 @@ export class GameController {
 
   private guessCombination = async (req: Request, res: Response) => {
     try {
-      const resultOfGuess = this.gameService.guessCombination(req.body.gameId, req.body.guess as COLOUR[]);
+      const resultOfGuess = await this.gameService.guessCombination(req.body.gameId, req.body.guess as COLOUR[]);
       res.send(resultOfGuess);
       
     } catch (e) {

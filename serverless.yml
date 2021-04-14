@@ -3,6 +3,7 @@
 plugins: # List of plugins of use on application
   - serverless-offline # Get your serverless configuration and run the server local
   - serverless-plugin-typescript-express # Help us with configuration typescript on serverless
+  - serverless-dotenv-plugin # Help with .env management files
 
 # Project name on the infrastructure created
 service: node-typescript-serverless
