@@ -1,16 +1,13 @@
-import AWS from 'aws-sdk'
+import AWS from "aws-sdk";
 
 export class S3Client {
-  protected client: AWS.S3
+  protected client: AWS.S3;
 
-  constructor(
-    accessKeyId: string,
-    secretAccessKey: string
-  ) {
+  constructor(accessKeyId: string, secretAccessKey: string) {
     this.client = new AWS.S3({
       accessKeyId,
-      secretAccessKey
-    })
+      secretAccessKey,
+    });
   }
 
   public async put(
@@ -19,12 +16,12 @@ export class S3Client {
     return new Promise((resolve, reject) => {
       this.client.putObject(request, (error, data) => {
         if (error) {
-          return reject(error)
+          return reject(error);
         }
 
-        return resolve(data)
-      })
-    })
+        return resolve(data);
+      });
+    });
   }
 
   public async get(
@@ -33,12 +30,12 @@ export class S3Client {
     return new Promise((resolve, reject) => {
       this.client.getObject(request, (error, data) => {
         if (error) {
-          return reject(error)
+          return reject(error);
         }
 
-        return resolve(data)
-      })
-    })
+        return resolve(data);
+      });
+    });
   }
 
   public createPutPublicJsonRequest(
@@ -50,22 +47,19 @@ export class S3Client {
       Bucket: location,
       Key: filename,
       Body: contents,
-      ContentType: 'application/json; charset=utf-8',
-      ACL: 'public-read',
-      CacheControl: 'max-age=60'
-    }
+      ContentType: "application/json; charset=utf-8",
+      ACL: "public-read",
+      CacheControl: "max-age=60",
+    };
 
     return request;
   }
 
-  public createGetPublicJsonRequest(
-    location: string,
-    filename: string
-  ) {
+  public createGetPublicJsonRequest(location: string, filename: string) {
     const request: AWS.S3.Types.GetObjectRequest = {
       Bucket: location,
       Key: filename,
-    }
+    };
 
     return request;
   }

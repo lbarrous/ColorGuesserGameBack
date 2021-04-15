@@ -1,9 +1,8 @@
-import { Application } from "express";
-import { GameController } from "./controllers/gameController";
-import { GameService } from "./services/gameService";
 import bodyParser from "body-parser";
 import cors from "cors";
-import express from "express";
+import express, { Application } from "express";
+import { GameController } from "./controllers/gameController";
+import { GameService } from "./services/gameService";
 
 class App {
   public app: Application;
@@ -32,4 +31,4 @@ class App {
   }
 }
 
-export default new App().app; 
+export default new App().app;

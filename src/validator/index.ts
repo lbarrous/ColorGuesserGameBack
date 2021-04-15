@@ -2,28 +2,16 @@ import { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 
 export const newGameValidationRules = () => {
-  return [
-    body("maxAttempts")
-      .exists()
-      .notEmpty()
-  ];
+  return [body("maxAttempts").notEmpty()];
 };
 
 export const guessCombinationValidationRules = () => {
-  return [
-    body("guess")
-      .exists()
-      .notEmpty()
-      .isArray(),
-    body("gameId")
-      .exists()
-      .notEmpty()
-  ];
+  return [body("guess").notEmpty().isArray(), body("gameId").notEmpty()];
 };
 
 export const validate = (schemas: any[]) => {
   return async (req: Request, res: Response, next: any) => {
-    await Promise.all(schemas.map(schema => schema.run(req)));
+    await Promise.all(schemas.map((schema) => schema.run(req)));
 
     const result = validationResult(req);
     if (result.isEmpty()) {

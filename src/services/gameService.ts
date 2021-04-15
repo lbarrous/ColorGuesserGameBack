@@ -1,13 +1,13 @@
+import { v4 as uuidv4 } from "uuid";
 import { INITIAL_COLOURS, WELCOME_MESSAGE } from "../constants";
+import { createOrUpdateGame, getGame } from "../database";
 import { COLOUR, Game, GAMESTATE, Result } from "../types";
 import {
   arrayEquals,
-  shuffleArray,
+  getCorrectValuesFromGuess,
   isGame,
-  getCorrectValuesFromGuess
+  shuffleArray,
 } from "../utils";
-import { v4 as uuidv4 } from "uuid";
-import { createOrUpdateGame, getGame } from "../database";
 
 export class GameService {
   public getWelcomeMessage() {
@@ -20,7 +20,7 @@ export class GameService {
       combination: shuffleArray(INITIAL_COLOURS),
       maxAttempts,
       guesses: 0,
-      gameState: GAMESTATE.IN_PROGRESS
+      gameState: GAMESTATE.IN_PROGRESS,
     };
     await createOrUpdateGame(newGame);
     return newGame;
@@ -43,7 +43,7 @@ export class GameService {
         newGame = {
           ...currentGame,
           guesses: currentGame.guesses + 1,
-          gameState: result
+          gameState: result,
         };
       } else {
         if (currentGame.guesses < currentGame.maxAttempts - 1) {
@@ -52,18 +52,18 @@ export class GameService {
             correctColors: getCorrectValuesFromGuess(
               colourGuess,
               currentGame.combination
-            )
+            ),
           };
           newGame = {
             ...currentGame,
-            guesses: result.hits
+            guesses: result.hits,
           };
         } else {
           result = GAMESTATE.LOST;
           newGame = {
             ...currentGame,
             guesses: currentGame.guesses + 1,
-            gameState: result
+            gameState: result,
           };
         }
       }

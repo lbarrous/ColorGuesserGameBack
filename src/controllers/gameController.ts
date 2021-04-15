@@ -1,7 +1,11 @@
 import { Request, Response, Router } from "express";
 import { GameService } from "../services/gameService";
-import { guessCombinationValidationRules, newGameValidationRules, validate } from "../validator";
 import { COLOUR } from "../types";
+import {
+  guessCombinationValidationRules,
+  newGameValidationRules,
+  validate,
+} from "../validator";
 
 export class GameController {
   public router = Router();
@@ -17,7 +21,9 @@ export class GameController {
 
   private newGame = async (req: Request, res: Response) => {
     try {
-      const newGame = await this.gameService.createNewGame(parseInt(req.body.maxAttempts));
+      const newGame = await this.gameService.createNewGame(
+        parseInt(req.body.maxAttempts)
+      );
       res.send(newGame.gameId);
     } catch (e) {
       res.status(500).send(e.message);
@@ -26,9 +32,11 @@ export class GameController {
 
   private guessCombination = async (req: Request, res: Response) => {
     try {
-      const resultOfGuess = await this.gameService.guessCombination(req.body.gameId, req.body.guess as COLOUR[]);
+      const resultOfGuess = await this.gameService.guessCombination(
+        req.body.gameId,
+        req.body.guess as COLOUR[]
+      );
       res.send(resultOfGuess);
-      
     } catch (e) {
       res.status(500).send(e.message);
     }
@@ -36,7 +44,11 @@ export class GameController {
 
   public setRoutes() {
     this.router.get("/", this.welcome);
-    this.router.route("/newGame").post(validate(newGameValidationRules()), this.newGame);
-    this.router.route("/guess").post(validate(guessCombinationValidationRules()), this.guessCombination);
+    this.router
+      .route("/newGame")
+      .post(validate(newGameValidationRules()), this.newGame);
+    this.router
+      .route("/guess")
+      .post(validate(guessCombinationValidationRules()), this.guessCombination);
   }
 }

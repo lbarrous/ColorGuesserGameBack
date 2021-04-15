@@ -16,9 +16,13 @@ export const isProduction = (): boolean => {
 export const arrayEquals = (a: any[], b: any[]): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i]);
 
-  export const isGame = (game: Game | null): game is Game => 
+export const isGame = (game: Game | null): game is Game =>
   (game as Game).gameId !== undefined;
 
-  export const getCorrectValuesFromGuess = (colourGuess: COLOUR[], colorCorrectCombination: COLOUR[]): number => {
-    return colourGuess.filter((color, i) => color === colorCorrectCombination[i]).length;
-  }
+export const getCorrectValuesFromGuess = (
+  colourGuess: COLOUR[],
+  colorCorrectCombination: COLOUR[]
+): number => {
+  return colourGuess.filter((color, i) => color === colorCorrectCombination[i])
+    .length;
+};

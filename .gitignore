@@ -3,3 +3,4 @@
 /localState
 /dist
 /.serverless
+/coverage
