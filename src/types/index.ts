@@ -1,9 +1,9 @@
 export enum COLOUR {
-    R="R",
-    G="G",
-    B="B",
-    Y="Y",
-    P="P",
+    R="red",
+    G="green",
+    B="blue",
+    Y="yellow",
+    P="purple",
 }
 
 export enum GAMESTATE {
@@ -20,6 +20,7 @@ export interface Game {
     gameState: GAMESTATE;
 }
 
-export interface Hits {
+export interface Result {
     hits: number;
+    correctColors: number;
 }

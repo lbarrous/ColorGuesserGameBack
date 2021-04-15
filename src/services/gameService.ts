@@ -1,6 +1,11 @@
 import { INITIAL_COLOURS, WELCOME_MESSAGE } from "../constants";
-import { COLOUR, Game, GAMESTATE, Hits } from "../types";
-import { arrayEquals, shuffleArray, isGame } from "../utils";
+import { COLOUR, Game, GAMESTATE, Result } from "../types";
+import {
+  arrayEquals,
+  shuffleArray,
+  isGame,
+  getCorrectValuesFromGuess
+} from "../utils";
 import { v4 as uuidv4 } from "uuid";
 import { createOrUpdateGame, getGame } from "../database";
 
@@ -28,11 +33,11 @@ export class GameService {
   public async guessCombination(
     gameId: string,
     colourGuess: COLOUR[]
-  ): Promise<GAMESTATE | Hits | null> {
+  ): Promise<GAMESTATE | Result | null> {
     const currentGame = await this.getGame(gameId);
     if (isGame(currentGame)) {
       let newGame: Game;
-      let result: GAMESTATE | Hits;
+      let result: GAMESTATE | Result;
       if (arrayEquals(currentGame.combination, colourGuess)) {
         result = GAMESTATE.WON;
         newGame = {
@@ -42,7 +47,13 @@ export class GameService {
         };
       } else {
         if (currentGame.guesses < currentGame.maxAttempts - 1) {
-          result = { hits: currentGame.guesses + 1 };
+          result = {
+            hits: currentGame.guesses + 1,
+            correctColors: getCorrectValuesFromGuess(
+              colourGuess,
+              currentGame.combination
+            )
+          };
           newGame = {
             ...currentGame,
             guesses: result.hits

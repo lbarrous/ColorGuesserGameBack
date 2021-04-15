@@ -18,3 +18,7 @@ export const arrayEquals = (a: any[], b: any[]): boolean =>
 
   export const isGame = (game: Game | null): game is Game => 
   (game as Game).gameId !== undefined;
+
+  export const getCorrectValuesFromGuess = (colourGuess: COLOUR[], colorCorrectCombination: COLOUR[]): number => {
+    return colourGuess.filter((color, i) => color === colorCorrectCombination[i]).length;
+  }
