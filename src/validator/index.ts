@@ -1,8 +1,12 @@
-import { body, validationResult } from "express-validator";
 import { Request, Response } from "express";
+import { body, validationResult } from "express-validator";
 
 export const newGameValidationRules = () => {
-  return [body("maxAttempts").exists().notEmpty()];
+  return [
+    body("maxAttempts")
+      .exists()
+      .notEmpty()
+  ];
 };
 
 export const guessCombinationValidationRules = () => {
@@ -11,7 +15,9 @@ export const guessCombinationValidationRules = () => {
       .exists()
       .notEmpty()
       .isArray(),
-    body("gameId").exists().notEmpty()
+    body("gameId")
+      .exists()
+      .notEmpty()
   ];
 };
 
@@ -25,6 +31,6 @@ export const validate = (schemas: any[]) => {
     }
 
     const errors = result.array();
-    return res.send(errors);
+    return res.status(300).send(errors);
   };
 };
