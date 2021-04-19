@@ -20,7 +20,12 @@ export interface Game {
   gameState: GAMESTATE;
 }
 
-export interface Result {
+export interface GuessResult {
   hits: number;
   correctColors: number;
+}
+
+export interface FinalResult {
+  resultOfGame: GAMESTATE;
+  solution?: COLOUR[];
 }

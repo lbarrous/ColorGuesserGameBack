@@ -71,7 +71,11 @@ describe("POST /guess", () => {
       .send(data)
       .expect(200)
       .then(async (response) => {
-        expect(response.text).toEqual("WON");
+        expect(response.text).toEqual(
+          JSON.stringify({
+            resultOfGame: "WON",
+          })
+        );
       });
   });
   it("should return STATUS 200 & valid response with LOST message is combination is not guessed and it is reached to the last attempt", async () => {
@@ -93,7 +97,12 @@ describe("POST /guess", () => {
       .send(data)
       .expect(200)
       .then(async (response) => {
-        expect(response.text).toEqual("LOST");
+        expect(response.text).toEqual(
+          JSON.stringify({
+            resultOfGame: "LOST",
+            solution: ["red", "purple", "blue", "green", "yellow"],
+          })
+        );
       });
   });
 });

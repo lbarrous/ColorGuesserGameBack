@@ -4,3 +4,5 @@
 /dist
 /.serverless
 /coverage
+.env.production
+.env.development
