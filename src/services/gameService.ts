@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { INITIAL_COLOURS, WELCOME_MESSAGE } from "../constants";
 import { createOrUpdateGame, getGame } from "../database";
-import { COLOUR, Game, GAMESTATE, Result } from "../types";
+import { COLOUR, FinalResult, Game, GAMESTATE, GuessResult } from "../types";
 import {
   arrayEquals,
   getCorrectValuesFromGuess,
@@ -30,27 +30,28 @@ export class GameService {
     return await getGame(gameId);
   }
 
-  public async guessCombination(
-    gameId: string,
-    colourGuess: COLOUR[]
-  ): Promise<GAMESTATE | Result | null> {
-    const currentGame = await this.getGame(gameId);
+  private async getNewStateOfGame(
+    newColourGuess: COLOUR[],
+    currentGame: Game | null
+  ) {
     if (isGame(currentGame)) {
       let newGame: Game;
-      let result: GAMESTATE | Result;
-      if (arrayEquals(currentGame.combination, colourGuess)) {
-        result = GAMESTATE.WON;
+      let result: FinalResult | GuessResult;
+      if (arrayEquals(currentGame.combination, newColourGuess)) {
+        result = {
+          resultOfGame: GAMESTATE.WON,
+        };
         newGame = {
           ...currentGame,
           guesses: currentGame.guesses + 1,
-          gameState: result,
+          gameState: GAMESTATE.WON,
         };
       } else {
         if (currentGame.guesses < currentGame.maxAttempts - 1) {
           result = {
             hits: currentGame.guesses + 1,
             correctColors: getCorrectValuesFromGuess(
-              colourGuess,
+              newColourGuess,
               currentGame.combination
             ),
           };
@@ -59,11 +60,14 @@ export class GameService {
             guesses: result.hits,
           };
         } else {
-          result = GAMESTATE.LOST;
+          result = {
+            resultOfGame: GAMESTATE.LOST,
+            solution: currentGame.combination,
+          };
           newGame = {
             ...currentGame,
             guesses: currentGame.guesses + 1,
-            gameState: result,
+            gameState: GAMESTATE.LOST,
           };
         }
       }
@@ -72,5 +76,13 @@ export class GameService {
     } else {
       return null;
     }
+  }
+
+  public async guessCombination(
+    gameId: string,
+    colourGuess: COLOUR[]
+  ): Promise<FinalResult | GuessResult | null> {
+    const currentGame = await this.getGame(gameId);
+    return await this.getNewStateOfGame(colourGuess, currentGame);
   }
 }
